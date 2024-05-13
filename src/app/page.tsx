@@ -1,6 +1,6 @@
-import { Icons } from "@/components/Icons";
 import { MaxWidthWrapper } from "@/components/MaxWidthWrapper";
 import { Phone } from "@/components/Phone";
+import { Testimonials } from "@/components/Testimonials";
 import { CheckIcon, StarIcon } from "lucide-react";
 
 export default function Home() {
@@ -114,15 +114,7 @@ export default function Home() {
         </MaxWidthWrapper>
       </section>
 
-      <section className="py-24 bg-slate-100">
-        <MaxWidthWrapper className="flex flex-col items-center gap-16 sm:gap-32">
-          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-            <h2 className="order-1 mt-2 tracking-tight font-bold text-5xl md:text-6xl text-center text-balance !leading-tight text-gray-900">
-              O que nossos <span className="relative px-2">clientes <Icons.underline className="absolute hidden sm:block pointer-events-none inset-x-0 -bottom-5 text-green-500" /></span> falam
-            </h2>
-          </div>
-        </MaxWidthWrapper>
-      </section>
+      <Testimonials />
     </main>
   );
 }
