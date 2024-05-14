@@ -1,7 +1,10 @@
+import { Icons } from "@/components/Icons";
 import { MaxWidthWrapper } from "@/components/MaxWidthWrapper";
 import { Phone } from "@/components/Phone";
 import { Testimonials } from "@/components/Testimonials";
-import { CheckIcon, StarIcon } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { ArrowRightIcon, CheckIcon, StarIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -115,6 +118,75 @@ export default function Home() {
       </section>
 
       <Testimonials />
+
+      <section>
+        <MaxWidthWrapper className="py-24">
+          <div className="mb-12 px-6 lg:px-8">
+            <div className="max-w-3xl mx-auto sm:text-center">
+              <h2 className="order-1 mt-2 tracking-tight font-bold text-5xl md:text-6xl text-center text-balance !leading-tight text-gray-900">
+                Envie sua foto e crie <span className="relative px-2 text-white bg-green-600">sua própria capinha</span>
+              </h2>
+            </div>
+          </div>
+
+          <div className="max-w-6xl mx-auto px-6 lg:px-8">
+            <div className="relative flex flex-col items-center md:grid grid-cols-2 gap-40">
+              <img
+                src="/arrow.png"
+                alt="Flecha indicativa"
+                className="absolute top-[25rem] md:top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-10 rotate-90 md:rotate-0"
+              />
+
+              <div className="relative max-w-sm w-full h-80 md:h-full md:justify-self-end rounded-xl lg:rounded-2xl bg-gray-900/5 ring-inset ring-gray-900/10">
+                <img
+                  src="/horse.jpg"
+                  className="w-full h-full rounded-md object-cover shadow-2xl bg-white ring-1 ring-gray-900/10"
+                />
+              </div>
+
+              <Phone
+                imgSrc="/horse_phone.jpg"
+                className="w-60"
+              />
+            </div>
+          </div>
+
+          <ul className="max-w-prose w-fit mx-auto mt-12 sm:text-lg space-y-2">
+            <li className="w-fit">
+              <CheckIcon className="w-5 h-5 inline mr-1.5 text-green-600" />
+
+              Material de silicone de alta qualidade
+            </li>
+            <li className="w-fit">
+              <CheckIcon className="w-5 h-5 inline mr-1.5 text-green-600" />
+
+              Revestido contra arranhões e marcas de dedo
+            </li>
+            <li className="w-fit">
+              <CheckIcon className="w-5 h-5 inline mr-1.5 text-green-600" />
+
+              Compatível com carregamento sem fio
+            </li>
+            <li className="w-fit">
+              <CheckIcon className="w-5 h-5 inline mr-1.5 text-green-600" />
+
+              Garantia de impressão de 5 anos
+            </li>
+
+            <div className="flex justify-center">
+              <Link
+                href="/configure/upload"
+                className={buttonVariants({
+                  size: "lg",
+                  className: "mx-auto mt-8"
+                })}
+              >
+                Crie sua capinha agora <ArrowRightIcon className="h-4 w-4 ml-1.5 shrink-0" />
+              </Link>
+            </div>
+          </ul>
+        </MaxWidthWrapper>
+      </section>
     </main>
   );
 }
