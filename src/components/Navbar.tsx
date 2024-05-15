@@ -77,7 +77,7 @@ export async function Navbar() {
                         <div className="hidden sm:block h-8 w-px bg-zinc-200" />
 
                         <Link
-                            href="/api/auth/logout"
+                            href="/configure/upload"
                             className={buttonVariants({
                                 size: "sm",
                                 className: "hidden sm:flex items-center gap-1"

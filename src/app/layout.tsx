@@ -1,10 +1,11 @@
+import { Footer } from "@/components/Footer";
+import { Navbar } from "@/components/Navbar";
+import { ptBR } from "@clerk/localizations";
+import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from 'sonner';
 import "./globals.css";
-import { Navbar } from "@/components/Navbar";
-import { ClerkProvider } from '@clerk/nextjs'
-import { ptBR } from "@clerk/localizations";
-import { Footer } from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,11 +23,15 @@ export default function RootLayout({
     <ClerkProvider localization={ptBR}>
       <html lang="pt-br">
         <body className={inter.className}>
+          <Toaster richColors closeButton />
           <Navbar />
-          
-          {children}
 
-          <Footer />
+          <main className="flex flex-col min-h-[calc(100vh-3.5rem-1px)]">
+            {children}
+
+            <Footer />
+          </main>
+
         </body>
       </html>
     </ClerkProvider>

@@ -11,7 +11,9 @@
   "dependencies": {
     "@clerk/localizations": "^2.3.1",
     "@clerk/nextjs": "^5.0.7",
+    "@radix-ui/react-progress": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
+    "@uploadthing/react": "^6.5.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.1.9",
@@ -19,8 +21,12 @@
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
+    "react-dropzone": "^14.2.3",
+    "sonner": "^1.4.41",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "uploadthing": "^6.10.4",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",
