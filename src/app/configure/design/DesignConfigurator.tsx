@@ -1,20 +1,23 @@
 'use client'
 
 import NextImage from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Rnd } from "react-rnd";
 
 import { HandleComponent } from "@/components/HandleComponent";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { COLORS, FINISHES, MATERIALS, MODELS } from "@/validators/option-validator";
-import { Radio, RadioGroup } from "@headlessui/react";
+import { Radio, RadioGroup, Label as RadioGroupLabel, Description as RadioGroupDescription } from "@headlessui/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
+import { ArrowRightIcon, CheckIcon, ChevronsUpDownIcon } from "lucide-react";
+import { BASE_PRICE } from "@/config/products";
+import { useUploadThing } from "@/lib/uploadthing";
+import { toast } from "sonner";
 
 interface DesignConfiguratorProps {
     configId: string
@@ -26,6 +29,9 @@ interface DesignConfiguratorProps {
 }
 
 export function DesignConfigurator({ imageDimensions, imageUrl, configId }: DesignConfiguratorProps) {
+    const phoneCaseRef = useRef<HTMLDivElement>(null)
+    const containerRef = useRef<HTMLDivElement>(null)
+
     const [options, setOptions] = useState<{
         color: (typeof COLORS)[number],
         model: (typeof MODELS.options)[number],
@@ -37,12 +43,74 @@ export function DesignConfigurator({ imageDimensions, imageUrl, configId }: Desi
         material: MATERIALS.options[0],
         finish: FINISHES.options[0]
     })
+    const [renderedDimension, setRenderedDimension] = useState({
+        width: imageDimensions.width / 4,
+        height: imageDimensions.height / 4
+    })
+    const [renderedPosition, setRenderedPosition] = useState({
+        x: 150,
+        y: 205
+    })
+
+    const { startUpload } = useUploadThing('imageUploader')
+
+    async function saveConfiguration() {
+        try {
+            const { left: caseLeft, top: caseTop, width, height } = phoneCaseRef.current!.getBoundingClientRect()
+            const { left: containerLeft, top: containerTop } = containerRef.current!.getBoundingClientRect()
+
+            const leftOffset = caseLeft - containerLeft;
+            const topOffset = caseTop - containerTop;
+
+            const actualX = renderedPosition.x - leftOffset;
+            const actualY = renderedPosition.y - topOffset;
+
+            const canvas = document.createElement("canvas")
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d")
+
+            const userImage = new Image()
+            userImage.crossOrigin = "anonymous"
+            userImage.src = imageUrl
+            await new Promise((resolve) => userImage.onload = resolve)
+
+            ctx?.drawImage(
+                userImage,
+                actualX,
+                actualY,
+                renderedDimension.width,
+                renderedDimension.height
+            )
+
+            const base64 = canvas.toDataURL();
+            const base64Data = base64.split(",")[1];
+
+            const blob = base64ToBlob(base64Data, "image/png")
+            const file = new File([blob], "filename.png", { type: "image/png" })
+
+            await startUpload([file], { configId })
+        } catch (error) {
+            toast.error("Alguma coisa deu errado, por favor tente novamente!")
+        }
+    }
+
+    function base64ToBlob(base64: string, mimeType: string) {
+        const byteCharacters = atob(base64)
+        const byteArray = Uint8Array.from(byteCharacters, char => char.charCodeAt(0))
+
+        return new Blob([byteArray], { type: mimeType })
+    }
 
     return (
-        <div className="grid grid-cols-3 my-20 pb-20">
-            <div className="relative flex items-center justify-center max-w-4xl h-[37.5rem] p-12 text-center col-span-2 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 my-20 pb-20">
+            <div
+                ref={containerRef}
+                className="relative flex items-center justify-center max-w-4xl h-[37.5rem] p-12 text-center col-span-2 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            >
                 <div className="relative w-60 bg-opacity-50 pointer-events-none aspect-[896/1831]">
                     <AspectRatio
+                        ref={phoneCaseRef}
                         ratio={896 / 1831}
                         className="relative w-full pointer-events-none z-50 aspect-[896/1831]"
                     >
@@ -78,6 +146,19 @@ export function DesignConfigurator({ imageDimensions, imageUrl, configId }: Desi
                         bottomLeft: <HandleComponent />,
                         topLeft: <HandleComponent />,
                         topRight: <HandleComponent />
+                    }}
+                    onResizeStop={(_, __, ref, ___, { x, y }) => {
+                        setRenderedDimension({
+                            height: parseInt(ref.style.height.slice(0, -2)),
+                            width: parseInt(ref.style.width.slice(0, -2))
+                        })
+
+                        setRenderedPosition({ x, y })
+                    }}
+                    onDragStop={(_, data) => {
+                        const { x, y } = data
+
+                        setRenderedPosition({ x, y })
                     }}
                     className="absolute z-20 border-[3px] border-primary"
                 >
@@ -127,7 +208,7 @@ export function DesignConfigurator({ imageDimensions, imageUrl, configId }: Desi
                                             key={color.label}
                                             value={color}
                                             className={({ checked }) => cn(
-                                                "flex items-center justify-center p-0.5 -m-0.5 rounded-full border-2 border-transparent cursor-pointer active:ring-0 active:outline-none focus:ring-0 focus:outline-none",
+                                                "flex p-0.5 -m-0.5 rounded-full border-2 border-transparent cursor-pointer active:ring-0 active:outline-none focus:ring-0 focus:outline-none",
                                                 checked && `border-${color.tw}`
                                             )}
                                         >
@@ -185,13 +266,77 @@ export function DesignConfigurator({ imageDimensions, imageUrl, configId }: Desi
                                 <RadioGroup
                                     key={name}
                                     value={options[name]}
+                                    onChange={(val) => {
+                                        setOptions((prev) => ({ ...prev, [name]: val }))
+                                    }}
                                 >
+                                    <Label className="capitalize">
+                                        {name}
+                                    </Label>
 
+                                    <div className="mt-3 space-y-4">
+                                        {selectableOptions.map((option) => (
+                                            <Radio
+                                                key={option.value}
+                                                value={option}
+                                                className={({ checked }) => cn(
+                                                    "relative block sm:flex sm:justify-between px-6 py-4 cursor-pointer rounded-lg shadow-sm border-2 border-zinc-200 bg-white focus:outline-none ring-0 focus:ring-0 outline-none",
+                                                    checked && "border-primary"
+                                                )}
+                                            >
+                                                <div className="flex flex-col text-sm">
+                                                    <RadioGroupLabel
+                                                        as="span"
+                                                        className="font-medium text-gray-900"
+                                                    >
+                                                        {option.label}
+                                                    </RadioGroupLabel>
+
+                                                    {option.description ? (
+                                                        <RadioGroupDescription
+                                                            as="span"
+                                                            className="text-muted-foreground"
+                                                        >
+                                                            {option.description}
+                                                        </RadioGroupDescription>
+                                                    ) : null}
+                                                </div>
+
+                                                <RadioGroupDescription
+                                                    as="span"
+                                                    className="flex mt-2 sm:mt-0 sm:ml-4 font-medium text-sm sm:text-right text-gray-900"
+                                                >
+                                                    {formatPrice(option.price / 100)}
+                                                </RadioGroupDescription>
+                                            </Radio>
+                                        ))}
+                                    </div>
                                 </RadioGroup>
                             ))}
                         </div>
                     </div>
                 </ScrollArea>
+
+                <div className="w-full h-16 px-8 bg-white">
+                    <div className="h-px w-full bg-zinc-200" />
+
+                    <div className="flex justify-end items-center w-full h-full">
+                        <div className="flex items-center w-full gap-6">
+                            <p className="font-medium whitespace-nowrap">
+                                {formatPrice((BASE_PRICE + options.finish.price + options.material.price) / 100)}
+                            </p>
+
+                            <Button
+                                size="sm"
+                                className="w-full"
+                                onClick={() => saveConfiguration()}
+                            >
+                                Continuar
+                                <ArrowRightIcon className="w-4 h-4 ml-1.5" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )
