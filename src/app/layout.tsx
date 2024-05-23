@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from 'sonner';
 import "./globals.css";
+import Providers from "@/components/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +28,9 @@ export default function RootLayout({
           <Navbar />
 
           <main className="flex flex-col min-h-[calc(100vh-3.5rem-1px)]">
-            {children}
+            <Providers>
+              {children}
+            </Providers>
 
             <Footer />
           </main>

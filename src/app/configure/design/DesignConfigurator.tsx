@@ -18,6 +18,9 @@ import { ArrowRightIcon, CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { BASE_PRICE } from "@/config/products";
 import { useUploadThing } from "@/lib/uploadthing";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { saveConfigProps, saveConfig as _saveConfig } from "./actions";
+import { useRouter } from "next/navigation";
 
 interface DesignConfiguratorProps {
     configId: string
@@ -31,6 +34,24 @@ interface DesignConfiguratorProps {
 export function DesignConfigurator({ imageDimensions, imageUrl, configId }: DesignConfiguratorProps) {
     const phoneCaseRef = useRef<HTMLDivElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
+
+    const router = useRouter()
+
+    const { mutate: saveConfig } = useMutation({
+        mutationKey: ["save-config"],
+        mutationFn: async (args: saveConfigProps) => {
+            await Promise.all([
+                saveConfiguration(),
+                _saveConfig(args)
+            ])
+        },
+        onError: () => {
+            toast.error("Algo deu errado, por favor tente novamente.")
+        },
+        onSuccess: () => {
+            router.push(`/configure/check?id=${configId}`)
+        }
+    })
 
     const [options, setOptions] = useState<{
         color: (typeof COLORS)[number],
@@ -329,7 +350,13 @@ export function DesignConfigurator({ imageDimensions, imageUrl, configId }: Desi
                             <Button
                                 size="sm"
                                 className="w-full"
-                                onClick={() => saveConfiguration()}
+                                onClick={() => saveConfig({
+                                    configId,
+                                    color: options.color.value,
+                                    finish: options.finish.value,
+                                    material: options.material.value,
+                                    model: options.model.value
+                                })}
                             >
                                 Continuar
                                 <ArrowRightIcon className="w-4 h-4 ml-1.5" />
