@@ -3,12 +3,12 @@ import { Navbar } from "@/components/Navbar";
 import { ptBR } from "@clerk/localizations";
 import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Recursive } from "next/font/google";
 import { Toaster } from 'sonner';
 import "./globals.css";
 import Providers from "@/components/Providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const recursive = Recursive({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "SnakeCase",
@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <ClerkProvider localization={ptBR}>
       <html lang="pt-br">
-        <body className={inter.className}>
+        <body className={recursive.className}>
           <Toaster richColors closeButton />
           <Navbar />
 

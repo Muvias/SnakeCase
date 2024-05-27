@@ -128,7 +128,9 @@ export function DesignPreview({ configuration }: DesignPreviewProps) {
                         </div>
 
                         <div className='flex justify-end mt-8 pb-12'>
-                            <Button className='px-4 sm:px-6 lg:px-8'>
+                            <Button
+                                className='px-4 sm:px-6 lg:px-8'
+                            >
                                 Finalizar <ArrowRightIcon className='h-4 w-4 ml-1.5' />
                             </Button>
                         </div>
