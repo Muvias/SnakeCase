@@ -6,20 +6,38 @@ import { BASE_PRICE, PRODUCT_PRICES } from '@/config/products'
 import { formatPrice } from '@/lib/utils'
 import { COLORS, MODELS } from '@/validators/option-validator'
 import { Configuration } from '@prisma/client'
+import { useMutation } from '@tanstack/react-query'
 import { ArrowRightIcon, CheckIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Confetti from 'react-dom-confetti'
+import { createCheckoutSession } from './actions'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface DesignPreviewProps {
     configuration: Configuration
 }
 
 export function DesignPreview({ configuration }: DesignPreviewProps) {
+    const router = useRouter()
+
     const [showConfetti, setShowConfetti] = useState(false)
 
     useEffect(() => {
         setShowConfetti(true)
     }, [])
+
+    const { mutate: createPaymentSession, isPending } = useMutation({
+        mutationKey: ["get-checkout-session"],
+        mutationFn: createCheckoutSession,
+        onSuccess: ({ url }) => {
+            if (url) router.push(url)
+            else throw new Error("Não foi possível recuperar a URL de pagamento.");
+        },
+        onError: () => {
+            toast.error("Algo deu errado, por favor tente novamente!")
+        },
+    })
 
     const { color, model, finish, material } = configuration
     const tw = COLORS.find((supportedColor) => supportedColor.value === color)?.tw
@@ -129,6 +147,8 @@ export function DesignPreview({ configuration }: DesignPreviewProps) {
 
                         <div className='flex justify-end mt-8 pb-12'>
                             <Button
+                                onClick={() => createPaymentSession({ configId: configuration.id })}
+                                disabled={isPending}
                                 className='px-4 sm:px-6 lg:px-8'
                             >
                                 Finalizar <ArrowRightIcon className='h-4 w-4 ml-1.5' />
