@@ -17,7 +17,7 @@ const STEPS = [
     {
         name: "Passo 3: Resumo",
         description: "Confira o design final",
-        url: "/preview"
+        url: "/check"
     },
 ]
 

@@ -13,15 +13,21 @@ import Confetti from 'react-dom-confetti'
 import { createCheckoutSession } from './actions'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { LoginModal } from '@/components/LoginModal'
+import { useUser } from '@clerk/nextjs'
 
 interface DesignPreviewProps {
     configuration: Configuration
 }
 
 export function DesignPreview({ configuration }: DesignPreviewProps) {
+    const { isSignedIn } = useUser()
+
     const router = useRouter()
 
+    const { id } = configuration
     const [showConfetti, setShowConfetti] = useState(false)
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
     useEffect(() => {
         setShowConfetti(true)
@@ -38,6 +44,16 @@ export function DesignPreview({ configuration }: DesignPreviewProps) {
             toast.error("Algo deu errado, por favor tente novamente!")
         },
     })
+
+    function handleCheckout() {
+        if (isSignedIn) {
+            createPaymentSession({ configId: id })
+        } else {
+            localStorage.setItem('configurationId', id)
+
+            setIsLoginModalOpen(true)
+        }
+    }
 
     const { color, model, finish, material } = configuration
     const tw = COLORS.find((supportedColor) => supportedColor.value === color)?.tw
@@ -59,6 +75,8 @@ export function DesignPreview({ configuration }: DesignPreviewProps) {
                     }}
                 />
             </div>
+
+            <LoginModal isOpen={isLoginModalOpen} setIsOpen={setIsLoginModalOpen} />
 
             <div className='grid grid-cols-1 sm:grid-cols-12 sm:grid-rows-1 mt-20 sm:gap-x-6 md:gap-x-8 lg:gap-x-12 text-sm'>
                 <div className='sm:col-span-4 md:col-span-3 md:row-span-2 md:row-end-2'>
@@ -147,7 +165,7 @@ export function DesignPreview({ configuration }: DesignPreviewProps) {
 
                         <div className='flex justify-end mt-8 pb-12'>
                             <Button
-                                onClick={() => createPaymentSession({ configId: configuration.id })}
+                                onClick={handleCheckout}
                                 disabled={isPending}
                                 className='px-4 sm:px-6 lg:px-8'
                             >

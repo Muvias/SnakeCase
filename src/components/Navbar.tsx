@@ -40,7 +40,7 @@ export async function Navbar() {
 
                                 {isAdmin ? (
                                     <Link
-                                        href="/api/auth/logout"
+                                        href="/api/auth"
                                         className={buttonVariants({
                                             size: "sm",
                                             variant: "ghost"
@@ -54,8 +54,6 @@ export async function Navbar() {
                             <SignedOut>
                                 <SignUpButton
                                     mode="modal"
-                                    fallbackRedirectUrl="/"
-                                    signInFallbackRedirectUrl="/"
                                 >
                                     <Button size="sm" variant="ghost" className="w-full">
                                         Cadastrar
@@ -64,8 +62,6 @@ export async function Navbar() {
 
                                 <SignInButton
                                     mode="modal"
-                                    fallbackRedirectUrl="/"
-                                    signUpFallbackRedirectUrl="/"
                                 >
                                     <Button size="sm" variant="ghost">
                                         Entrar
