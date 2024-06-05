@@ -40,7 +40,7 @@ export async function Navbar() {
 
                                 {isAdmin ? (
                                     <Link
-                                        href="/api/auth"
+                                        href="/dashboard"
                                         className={buttonVariants({
                                             size: "sm",
                                             variant: "ghost"
