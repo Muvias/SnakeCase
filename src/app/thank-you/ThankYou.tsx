@@ -1,17 +1,15 @@
 'use client'
 
-import { useQuery } from "@tanstack/react-query"
-import { GetPaymentStatus } from "./actions"
-import { notFound, useSearchParams } from "next/navigation"
-import { Loader2Icon } from "lucide-react"
 import { PhonePreview } from "@/components/PhonePreview"
 import { formatPrice } from "@/lib/utils"
+import { useQuery } from "@tanstack/react-query"
+import { Loader2Icon } from "lucide-react"
+import { useSearchParams } from "next/navigation"
+import { GetPaymentStatus } from "./actions"
 
 export function ThankYou() {
     const searchParams = useSearchParams()
-    const orderId = searchParams.get("orderId")
-
-    if (orderId === null) return notFound()
+    const orderId = searchParams.get("orderId") || ""
 
     const { data } = useQuery({
         queryKey: ["get-payment-status"],

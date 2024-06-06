@@ -37,7 +37,7 @@ export function DesignConfigurator({ imageDimensions, imageUrl, configId }: Desi
 
     const router = useRouter()
 
-    const { mutate: saveConfig } = useMutation({
+    const { mutate: saveConfig, isPending } = useMutation({
         mutationKey: ["save-config"],
         mutationFn: async (args: saveConfigProps) => {
             await Promise.all([
@@ -349,6 +349,9 @@ export function DesignConfigurator({ imageDimensions, imageUrl, configId }: Desi
 
                             <Button
                                 size="sm"
+                                isLoading={isPending}
+                                disabled={isPending}
+                                loadingText="Salvando"
                                 className="w-full"
                                 onClick={() => saveConfig({
                                     configId,
