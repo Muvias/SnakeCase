@@ -78,15 +78,15 @@ export function DesignPreview({ configuration }: DesignPreviewProps) {
 
             <LoginModal isOpen={isLoginModalOpen} setIsOpen={setIsLoginModalOpen} />
 
-            <div className='grid grid-cols-1 sm:grid-cols-12 sm:grid-rows-1 mt-20 sm:gap-x-6 md:gap-x-8 lg:gap-x-12 text-sm'>
-                <div className='sm:col-span-4 md:col-span-3 md:row-span-2 md:row-end-2'>
+            <div className='flex flex-col items-center md:grid sm:grid-cols-12 sm:grid-rows-1 mt-20 sm:gap-x-6 md:gap-x-8 lg:gap-x-12 text-sm'>
+                <div className='md:col-span-4 lg:col-span-3 md:row-span-2 md:row-end-2'>
                     <Phone
-                        className={`bg-${tw}`}
+                        className={`max-w-[150px] md:max-w-full bg-${tw}`}
                         imgSrc={configuration.croppedImageUrl!}
                     />
                 </div>
 
-                <div className='sm:col-span-9 md:row-end-1 mt-6 sm:mt-0'>
+                <div className='sm:col-span-9 md:row-end-1 mt-6'>
                     <h3 className='text-3xl font-bold tracking-tight text-gray-900'>
                         Sua capinha de {modelLabel}
                     </h3>
@@ -97,9 +97,9 @@ export function DesignPreview({ configuration }: DesignPreviewProps) {
                     </div>
                 </div>
 
-                <div className='sm:col-span-12 md:col-span-9 text-base'>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 py-8 sm:py-6 md:py-10 gap-y-8 sm:gap-x-6 border-b border-gray-200'>
-                        <div>
+                <div className='sm:col-span-12 md:col-span-9 text-base px-2'>
+                    <div className='flex flex-col items-center md:grid sm:grid-cols-2 py-8 sm:py-6 md:py-10 gap-y-8 sm:gap-x-6 border-b border-gray-200'>
+                        <div className='w-full'>
                             <p className='font-medium text-zinc-950'>
                                 Destaques
                             </p>
@@ -112,7 +112,7 @@ export function DesignPreview({ configuration }: DesignPreviewProps) {
                             </ol>
                         </div>
 
-                        <div>
+                        <div className='w-full'>
                             <p className='font-medium text-zinc-950'>
                                 Materiais
                             </p>
