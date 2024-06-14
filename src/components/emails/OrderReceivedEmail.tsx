@@ -68,7 +68,7 @@ export function OrderReceivedEmail({ shippingAddress, orderId, orderDate }: Orde
                                 </Text>
                             </Column>
 
-                            <Column>
+                            <Column style={{ marginLeft: 20}}>
                                 <Text style={global.paragraphWithBold}>
                                     Data do pedido
                                 </Text>

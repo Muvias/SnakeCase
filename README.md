@@ -1,6 +1,7 @@
 # SnakeCase
+> Status: Finalizado
 
-Finalizando...
+Crie sua própria capinha de Iphone personalizada, podendo escolher uma foto sua, ajustar e escolher os materais.
 
 ## Ferramentas utilizadas:
 
